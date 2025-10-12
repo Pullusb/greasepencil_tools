@@ -322,7 +322,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_idname = "gpencil.viewport_layer_nav_osd"
     bl_label = "GP Layer Navigator Pop up"
     bl_description = "Change active GP layer with a viewport interactive OSD"
-    bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO_GROUPED'}
 
     @classmethod
     def poll(cls, context):
