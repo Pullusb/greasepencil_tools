@@ -161,14 +161,27 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
                 # Get object keyframe position
                 anim_data = ob.animation_data
                 action = None
-
                 if anim_data:
                     action = anim_data.action
                 if action:
-                    for fcu in action.fcurves:
-                        for kf in fcu.keyframe_points:
-                            if kf.co.x not in self.pos:
-                                self.pos.append(kf.co.x)
+                    fcurves = []
+                    if bpy.app.version < (5, 0, 0):
+                        # previous API without action slots
+                        fcurves = action.fcurves
+                    else:
+                        slot = ob.animation_data.action_slot
+                        if slot:
+                            ## For now only use first layer -> first strip (will need adjustement in the future)
+                            ## Using 'slot.id_data.layers' in case multiple selected object are scanned in the future
+                            ## (currently only on active object, using 'action.layers' would be fine).
+                            fcurves = [fc for fc in slot.id_data.layers[0].strips[0].channelbag(slot).fcurves]
+                    
+                    self.pos += list(set([kf.co.x for fcu in fcurves for kf in fcu.keyframe_points]))
+                    ## Expanded equivalent
+                    # for fcu in fcurves:
+                    #     for kf in fcu.keyframe_points:
+                    #         if kf.co.x not in self.pos:
+                    #             self.pos.append(kf.co.x)
 
             if ob.type == 'GREASEPENCIL':
                 # Get GP frame position

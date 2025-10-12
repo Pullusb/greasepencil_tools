@@ -1,5 +1,9 @@
 # Changelog
 
+2.2.0 - 2025-10-12
+
+- fixed: timeline scrub compatibility with new blender 5.0 API (action_slots), retro_compatible
+
 2.1.0 - 2025-05-11
 
 - added: `Hide overlays` preference option for timeline scrub (Disabled by default)
