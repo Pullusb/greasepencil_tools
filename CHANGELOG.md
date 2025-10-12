@@ -1,8 +1,9 @@
 # Changelog
 
-2.2.0 - 2025-10-12
+2.2.1 - 2025-10-12
 
-- fixed: timeline scrub compatibility with new blender 5.0 API (action_slots), retro_compatible
+- added: Add Layer navigator Undo step. Prevent switching back layer when undoing an action done right after layer change
+- fixed: Timeline scrub compatibility with new blender 5.0 API (action_slots), retro_compatible
 
 2.1.0 - 2025-05-11
 
