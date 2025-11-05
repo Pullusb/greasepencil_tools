@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-#ExtraInfos from bl_info
+# Infos
 # "location": "Sidebar > Grease Pencil > Grease Pencil Tools",
-# "doc_url": "https://projects.blender.org/extensions/greasepencil_tools",
-# "tracker_url": "https://github.com/Pullusb/greasepencil-addon/issues",
+# "tracker_url": "https://github.com/Pullusb/greasepencil_tools/issues",
 
 import bpy
 from .  import (prefs,

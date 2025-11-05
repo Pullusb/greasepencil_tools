@@ -1,6 +1,10 @@
 # Changelog
 
-2.2.1 - 2025-10-12
+2.2.3 - 2025-11-05
+
+- fix: error when using `Box deform` in Paint mode with Blender 4.5+
+
+2.2.2 - 2025-10-12
 
 - added: Add Layer navigator Undo step. Prevent switching back layer when undoing an action done right after layer change
 - fixed: Timeline scrub compatibility with new blender 5.0 API (action_slots), retro_compatible

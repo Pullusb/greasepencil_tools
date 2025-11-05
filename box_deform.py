@@ -254,7 +254,10 @@ def view_cage(obj):
             m.object = cage
 
     if initial_mode == 'PAINT_GREASE_PENCIL':
-        mod.layer_filter = gpl.active.name
+        if bpy.app.version < (4, 5, 0):
+            mod.layer_filter = gpl.active.name
+        else:
+            mod.tree_node_filter = gpl.active.name
 
     # note : if initial was Paint, changed to Edit
     #        so vertex attribution is valid even for paint
