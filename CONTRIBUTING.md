@@ -6,7 +6,6 @@ Thank you for your interest in this project!
 
 **This project does not accept external code contributions.** All pull requests will be closed without being merged.
 
-> If a pull request feels like the best way to illustrate a point or demonstrate a proposed change, feel free to open one — it will be read and discussed like an issue, but will not be accepted.
 
 ## How You Can Help
 
@@ -15,6 +14,8 @@ While pull requests are not accepted, your feedback is still valuable. You can c
 - **Bug reports** — Help identify and fix problems.
 - **Feature requests** — Share ideas for improvements.
 - **Questions or discussions** — Ask about usage or suggest enhancements.
+
+> If a pull request feels like the best way to illustrate a point or demonstrate a proposed change, feel free to open one — it will be read and discussed like an issue, but will not be accepted.
 
 ## Reporting Bugs
 
