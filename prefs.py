@@ -133,6 +133,12 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             default = True,
             update=auto_rebind)
 
+    use_oskey: BoolProperty(
+            name = "combine with Cmd/OS key",
+            description = "add Cmd key (macOS) or OS/Win key (Windows/Linux)",
+            default = False,
+            update=auto_rebind)
+
     rc_angle_step: FloatProperty(
         name="Angle Steps",
         description="Step the rotation using this angle when using rotate canvas step modifier",
@@ -189,12 +195,16 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                     row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
                     row.prop(self, "use_alt", text='Alt')#, expand=True
                     row.prop(self, "use_shift", text='Shift')#, expand=True
+                    # Show "Cmd" on macOS, "OS" on other platforms
+                    import sys
+                    oskey_label = 'Cmd' if sys.platform == 'darwin' else 'OS'
+                    row.prop(self, "use_oskey", text=oskey_label)
                     row.prop(self, "mouse_click",text='')#expand=True
 
-                    if not self.use_ctrl and not self.use_alt and not self.use_shift:
+                    if not self.use_ctrl and not self.use_alt and not self.use_shift and not self.use_oskey:
                         box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
 
-                    if not all((self.use_ctrl, self.use_alt, self.use_shift)):
+                    if not all((self.use_ctrl, self.use_alt, self.use_shift, self.use_oskey)):
                         row = box.row(align = True)
                         snap_key_list = []
                         if not self.use_ctrl:
@@ -203,6 +213,8 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                             snap_key_list.append('Shift')
                         if not self.use_alt:
                             snap_key_list.append('Alt')
+                        if not self.use_oskey:
+                            snap_key_list.append(oskey_label)
 
                         row.label(text=f"Step rotation with: {' or '.join(snap_key_list)}", icon='DRIVER_ROTATIONAL_DIFFERENCE')
                         row.prop(self, "rc_angle_step", text='Angle Steps')
@@ -278,7 +290,7 @@ def register_keymaps():
     if 'view3d.rotate_canvas' not in km.keymap_items:
         km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
         kmi = km.keymap_items.new('view3d.rotate_canvas',
-        type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, any=False)
+        type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, oskey=pref.use_oskey, any=False)
 
         addon_keymaps.append((km, kmi))
 
