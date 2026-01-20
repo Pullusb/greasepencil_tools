@@ -1,5 +1,9 @@
 # Changelog
 
+2.2.4 - 2026-01-20
+
+- added: Possibility to use OS key in rotate canvas shortcut
+
 2.2.3 - 2025-11-05
 
 - fix: error when using `Box deform` in Paint mode with Blender 4.5+
