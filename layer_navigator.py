@@ -869,12 +869,13 @@ def draw_keymap_ui_custom(km, kmi, layout):
     else:
         row.label()
 
-    if (not kmi.is_user_defined) and kmi.is_user_modified:
-        ops = row.operator("gp.restore_keymap_item", text="", icon='BACK') # modified
-        ops.km_name = km.name
-        ops.kmi_name = kmi.idname
-    else:
-        row.label(text='', icon='BLANK1')
+    # if (not kmi.is_user_defined) and kmi.is_user_modified:
+    #     ## Restore ops is from another addon and should be re-implemented here to work
+    #     ops = row.operator("gp.restore_keymap_item", text="", icon='BACK')
+    #     ops.km_name = km.name
+    #     ops.kmi_name = kmi.idname
+    # else:
+    #     row.label(text='', icon='BLANK1')
 
     # Expanded, additional event settings
     if kmi.show_expanded:

@@ -1,5 +1,9 @@
 # Changelog
 
+2.2.5 - 2026-05-23
+
+- fixed: Error in preference draw UI when disabling Layer navigator `Y` shortcut
+
 2.2.4 - 2026-01-20
 
 - added: Possibility to use OS key in rotate canvas shortcut
