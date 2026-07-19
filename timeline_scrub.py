@@ -200,9 +200,15 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
                 return {'CANCELLED'}
 
         if self.rolling_mode:
-            # sorted and casted to int list since it's going to work with indexes
+            if self.lock_range:
+                # Trim before any index computation (out of range keys are not reachable)
+                self.pos = [i for i in self.pos if self.f_start <= i <= self.f_end]
+                if not self.pos:
+                    self.report({'WARNING'}, 'No keys to flip on within frame range')
+                    return {'CANCELLED'}
+            # Sorted and cast to int list since it's going to work with indices
             self.pos = sorted([int(f) for f in self.pos])
-            # find and make current frame the "starting" frame (force snap)
+            # Find and make current frame the "starting" frame (force snap)
             active_pos = [i for i, num in enumerate(self.pos) if num <= self.init_frame]
             if active_pos:
                 self.init_index = active_pos[-1]
