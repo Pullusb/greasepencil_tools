@@ -92,13 +92,19 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data and context.space_data.type in ('VIEW_3D', 'SEQUENCE_EDITOR', 'CLIP_EDITOR', 'NODE_EDITOR')
+        if not context.space_data:
+            return False
+        if context.space_data.type == 'NODE_EDITOR':
+            # Triggered by the global "Grease Pencil" keymap
+            return get_addon_prefs().ts.use_in_node_editor
+        return context.space_data.type in ('VIEW_3D', 'SEQUENCE_EDITOR', 'CLIP_EDITOR')
 
     def invoke(self, context, event):
         prefs = get_addon_prefs().ts
 
         self.current_area = context.area
-        self.key = prefs.keycode
+        # Get the key that triggered the modal (Fallback to keycode if not called through a Press)
+        self.key = event.type if event.value == 'PRESS' else prefs.keycode
         self.evaluate_gp_obj_key = prefs.evaluate_gp_obj_key
         self.always_snap = prefs.always_snap
         self.rolling_mode = prefs.rolling_mode
@@ -593,9 +599,8 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
     
     use_in_node_editor: BoolProperty(
         name="Use in Node editor",
-        description="Add the same shortcut to scrub in node editor the same way it's used in viewport",
-        default=True,
-        update=auto_rebind)
+        description="Allow using the scrub shortcut in node editor the same way it's used in viewport",
+        default=True)
 
     use_shift: BoolProperty(
         name="Combine With Shift",
@@ -783,9 +788,9 @@ def draw_ts_pref(prefs, layout):
     row.prop(prefs, 'rolling_mode')
     row = col.row()
     row.prop(prefs, 'use_in_timeline_editor', text='Add shortcut to scrub in timeline editors')
-    row.prop(prefs, 'use_in_node_editor', text='Add scrub in node editor')
-    row = col.row()
     row.prop(prefs, 'hide_overlays')
+    row = col.row()
+    row.prop(prefs, 'use_in_node_editor', text='Use scrub in node editor')
 
     # - HUD/OSD
     box = layout.box()
@@ -854,15 +859,6 @@ def register_keymaps():
                 operator, type=prefs.keycode, value='PRESS',
                 alt=prefs.use_alt, ctrl=prefs.use_ctrl, shift=prefs.use_shift)
             addon_keymaps.append((km, kmi))
-    
-    if prefs.use_in_node_editor:
-        km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
-        kmi = km.keymap_items.new(
-            'animation.time_scrub',
-            type=prefs.keycode, value='PRESS',
-            alt=prefs.use_alt, ctrl=prefs.use_ctrl, shift=prefs.use_shift)
-        kmi.repeat = False
-        addon_keymaps.append((km, kmi))
 
 
 def unregister_keymaps():
