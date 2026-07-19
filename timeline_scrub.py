@@ -153,7 +153,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
         ob = context.object
 
-        if context.space_data.type != 'VIEW_3D':
+        if context.space_data.type not in ('VIEW_3D', 'NODE_EDITOR'):
             ob = None  # do not consider any key
 
         if ob:  # condition to allow empty scrubing
@@ -186,7 +186,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             if ob.type == 'GREASEPENCIL':
                 # Get GP frame position
                 gpl = ob.data.layers
-                if group := context.grease_pencil.layer_groups.active:
+                if group := ob.data.layer_groups.active:
                     ## group is active (no active layer) -> consider keys of all layer in groups
                     group_frames = [f.frame_number for l in gpl for f in l.frames if l.parent_group == group]
                     if group_frames:
