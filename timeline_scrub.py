@@ -17,8 +17,6 @@ from bpy.props import (BoolProperty,
                        StringProperty,
                        IntProperty,
                        FloatVectorProperty,
-                       IntProperty,
-                       PointerProperty,
                        EnumProperty)
 
 
@@ -51,16 +49,11 @@ def draw_callback_px(self, context):
 
     # Display keyframes
     if self.use_hud_keyframes and self.batch_keyframes:
-        if self.keyframe_aspect == 'LINE':
-            gpu.state.line_width_set(3.0)
-            shader.bind()
-            shader.uniform_float("color", self.color_timeline)
-            self.batch_keyframes.draw(shader)
-        else:
-            gpu.state.line_width_set(1.0)
-            shader.bind()
-            shader.uniform_float("color", self.color_timeline)
-            self.batch_keyframes.draw(shader)
+        width = 3.0 if self.keyframe_aspect == 'LINE' else 1.0
+        gpu.state.line_width_set(width)
+        shader.bind()
+        shader.uniform_float("color", self.color_timeline)
+        self.batch_keyframes.draw(shader)
 
     # Show current frame line
     gpu.state.line_width_set(1.0)
@@ -99,7 +92,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.type in ('VIEW_3D', 'SEQUENCE_EDITOR', 'CLIP_EDITOR', 'NODE_EDITOR')
+        return context.space_data and context.space_data.type in ('VIEW_3D', 'SEQUENCE_EDITOR', 'CLIP_EDITOR', 'NODE_EDITOR')
 
     def invoke(self, context, event):
         prefs = get_addon_prefs().ts
@@ -543,7 +536,7 @@ class GPTS_OT_set_scrub_keymap(bpy.types.Operator):
         self.alt = event.alt
 
         if event.type not in exclude_keys and not any(x in event.type for x in exclude_in):
-            print('key:', event.type, 'value:', event.value)
+            # print('key:', event.type, 'value:', event.value)
             if event.value == 'PRESS':
                 self.report({'INFO'}, event.type)
                 # set the chosen key
@@ -671,7 +664,7 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         description="Color of the temporary timeline")
 
     color_playhead: FloatVectorProperty(
-        name="Cusor Color",
+        name="Cursor Color",
         subtype='COLOR_GAMMA',
         size=4,
         default=(0.01, 0.64, 1.0, 0.8),
