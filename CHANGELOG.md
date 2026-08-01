@@ -4,6 +4,9 @@
 
 - added: Timeline scrub preference choice to target all grease pencil layers keys instead of only active layer (default).
 - added: Timeline scrub works in node editor (toggle in preferences)
+- added: Box deform allow apply on all keyframe using Ctrl + Valid key:
+  - In Object mode: affect whole object instead of only active frame
+  - In Edit mode with multiframe: affect stroke selected in other frame (limitation: before validation, deformation is not visible on other frames)
 
 2.2.5 - 2026-05-23
 
