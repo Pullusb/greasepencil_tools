@@ -185,18 +185,24 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             if ob.type == 'GREASEPENCIL':
                 # Get GP frame position
                 gpl = ob.data.layers
-                if group := ob.data.layer_groups.active:
-                    ## group is active (no active layer) -> consider keys of all layer in groups
-                    group_frames = [f.frame_number for l in gpl for f in l.frames if l.parent_group == group]
-                    if group_frames:
-                        self.pos += sorted(set(group_frames))
-                    ## Consider all frame if layer is empty ?
+                if prefs.gp_layer_target == 'ALL':
+                    all_frames = set(f.frame_number for l in gpl for f in l.frames)
+                    self.pos += [n for n in sorted(all_frames) if n not in self.pos]
 
-                layer = gpl.active
-                if layer:
-                    for frame in layer.frames:
-                        if frame.frame_number not in self.pos:
-                            self.pos.append(frame.frame_number)
+                else:
+                    # 'ACTIVE': active layer keys, or keys of active group layers
+                    if group := ob.data.layer_groups.active:
+                        ## group is active (no active layer) -> consider keys of all layer in groups
+                        group_frames = [f.frame_number for l in gpl for f in l.frames if l.parent_group == group]
+                        if group_frames:
+                            self.pos += sorted(set(group_frames))
+                        ## Consider all frame if layer is empty ?
+
+                    layer = gpl.active
+                    if layer:
+                        for frame in layer.frames:
+                            if frame.frame_number not in self.pos:
+                                self.pos.append(frame.frame_number)
 
         if not ob or not self.pos:
             # Disable inverted behavior if no frame to snap
@@ -625,6 +631,17 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         description="Also snap on greasepencil object keyframe (else only active layer frames)",
         default=True)
 
+    gp_layer_target: EnumProperty(
+        name="Layer Target",
+        description="Grease pencil layers keys to consider when scrubbing",
+        default='ACTIVE',
+        items=(
+            ('ACTIVE', 'Active Layer Keys',
+             'Consider only keys of the active layer\n(if group item is active, consider keys of all layers in group)', 0),
+            ('ALL', 'All Layers Keys',
+             'Consider keys of all layers', 1),
+        ))
+
     pixel_step: IntProperty(
         name="Frame Interval On Screen",
         description="Pixel steps on screen that represent a frame intervals",
@@ -730,7 +747,9 @@ def draw_ts_pref(prefs, layout):
     layout.prop(prefs, 'use')
     if not prefs.use:
         return
+
     layout.prop(prefs, 'evaluate_gp_obj_key')
+    layout.prop(prefs, 'gp_layer_target')
     layout.prop(prefs, 'pixel_step')
 
     # -/ Keymap -
