@@ -1,5 +1,10 @@
 # Changelog
 
+2.3.0 - 2026-08-01
+
+- added: Timeline scrub preference choice to target all grease pencil layers keys instead of only active layer (default).
+- added: Timeline scrub works in node editor (toggle in preferences)
+
 2.2.5 - 2026-05-23
 
 - fixed: Error in preference draw UI when disabling Layer navigator `Y` shortcut
