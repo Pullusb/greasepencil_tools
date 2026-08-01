@@ -302,7 +302,7 @@ def delete_cage(cage):
     bpy.data.objects.remove(cage)
     bpy.data.lattices.remove(lattice)
 
-def apply_cage(gp_obj, context):
+def apply_cage(gp_obj, context, apply_all_keyframes):
     mod = gp_obj.modifiers.get('tmp_lattice')
     multi_user = None
     if mod:
@@ -313,7 +313,7 @@ def apply_cage(gp_obj, context):
             gp_obj.data = gp_obj.data.copy()
 
         with context.temp_override(object=gp_obj):
-            bpy.ops.object.modifier_apply(modifier=mod.name) # arg from GPv2: apply_as='DATA',
+            bpy.ops.object.modifier_apply(modifier=mod.name, all_keyframes=apply_all_keyframes)
 
         if multi_user:
             for o in other_user: # relink
@@ -357,9 +357,17 @@ class VIEW3D_OT_gp_box_deform(bpy.types.Operator):
     tab_press_ct = 0
 
     def modal(self, context, event):
+        allow_multi_apply = False
         display_text = f"Deform Cage size: {self.lat.points_u}x{self.lat.points_v} (1-9 or ctrl + ←→↑↓)  | \
 mode (M) : {'Linear' if self.lat.interpolation_type_u == 'KEY_LINEAR' else 'Spline'} | \
-valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
+valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui} | Shift+valid: Keep cage"
+        if self.gp_mode == 'OBJECT':
+            display_text += ' | Object Mode: Use Ctrl+valid to apply on all frame'
+            allow_multi_apply = True
+        elif self.gp_mode == 'EDIT' and context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
+            display_text += ' | Multiframe-edit: Use Ctrl+valid to apply on all selected strokes'
+            allow_multi_apply = True
+
         context.area.header_text_set(display_text)
 
 
@@ -465,10 +473,11 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/{self.shortcut_ui}"
                     # Let the cage as is with a unique ID
                     store_cage(self, 'lattice_cage_deform_group')
                 else:
-                    apply_cage(self.gp_obj, context) # must be in object mode
+                    apply_all_keyframes = True if allow_multi_apply and event.ctrl else False
+                    apply_cage(self.gp_obj, context, apply_all_keyframes) # must be in object mode
                     assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
                     for o in self.other_gp:
-                        apply_cage(o, context)
+                        apply_cage(o, context, apply_all_keyframes)
                         assign_vg(o, 'lattice_cage_deform_group', delete=True)
                     delete_cage(self.cage)
 
