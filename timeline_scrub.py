@@ -94,6 +94,8 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
     def poll(cls, context):
         if not context.space_data:
             return False
+        if context.mode == 'EDIT_TEXT':
+            return False
         if context.space_data.type == 'NODE_EDITOR':
             # Triggered by the global "Grease Pencil" keymap
             return get_addon_prefs().ts.use_in_node_editor
