@@ -173,7 +173,12 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
                             ## For now only use first layer -> first strip (will need adjustement in the future)
                             ## Using 'slot.id_data.layers' in case multiple selected object are scanned in the future
                             ## (currently only on active object, using 'action.layers' would be fine).
-                            fcurves = [fc for fc in slot.id_data.layers[0].strips[0].channelbag(slot).fcurves]
+                            layers = slot.id_data.layers
+                            if layers and layers[0].strips:
+                                # channelbag is None when assigned slot has no animation_data
+                                channelbag = layers[0].strips[0].channelbag(slot)
+                                if channelbag:
+                                    fcurves = channelbag.fcurves
                     
                     self.pos += list(set([kf.co.x for fcu in fcurves for kf in fcu.keyframe_points]))
                     ## Expanded equivalent
