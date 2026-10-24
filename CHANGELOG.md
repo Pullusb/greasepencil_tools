@@ -1,5 +1,10 @@
 # Changelog
 
+2.3.1 - 2026-10-24
+
+- fixed: Timeline scrub: prevent text input block when using a letter shortcut in text edit mode
+- fixed: Error when timeline scrubbing on an action slot containing zero channelbags 
+
 2.3.0 - 2026-08-01
 
 - added: Timeline scrub preference choice to target all grease pencil layers keys instead of only active layer (default).
